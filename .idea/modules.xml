@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/chat-magic.iml" filepath="$PROJECT_DIR$/.idea/modules/chat-magic.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/chat-magic.client.iml" filepath="$PROJECT_DIR$/.idea/modules/chat-magic.client.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/chat-magic.main.iml" filepath="$PROJECT_DIR$/.idea/modules/chat-magic.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/chat-magic.test.iml" filepath="$PROJECT_DIR$/.idea/modules/chat-magic.test.iml" />
