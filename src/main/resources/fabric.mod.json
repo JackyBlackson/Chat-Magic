@@ -1,0 +1,41 @@
+{
+	"schemaVersion": 1,
+	"id": "chatmagic",
+	"version": "${version}",
+	"name": "ChatMagic",
+	"description": "A mod to visualize block id and WorldEdit materials when you type in the chat field.",
+	"authors": [
+		"Jacky_Blackson"
+	],
+	"contact": {
+		"homepage": "https://github.com/JackyBlackson",
+		"sources": "https://github.com/JackyBlackson"
+	},
+	"license": "GNU General Public License v3.0 ",
+	"icon": "assets/chatmagic/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"com.jackyblackson.modfabric.ChatMagic"
+		],
+		"client": [
+			"com.jackyblackson.modfabric.ChatMagicClient"
+		]
+	},
+	"mixins": [
+		"chatmagic.mixins.json",
+		{
+			"config": "chatmagic.client.mixins.json",
+			"environment": "client"
+		}
+	],
+	"depends": {
+		"fabricloader": ">=0.15.11",
+		"minecraft": "~1.20.4",
+		"java": ">=17",
+		"fabric-api": "*"
+	},
+	"suggests": {
+		"another-mod": "*"
+	}
+}
