@@ -45,16 +45,6 @@ public abstract class ChatScreenMixin extends Screen {
     @Unique
     private List<ItemTooptipInfo> tooltipInfoList;
 
-    @Unique
-    private List<Integer> colors = List.of(
-            rgbaToInt(100, 100, 255, 255),
-            rgbaToInt(137, 255, 241, 255),
-            rgbaToInt(255, 136, 196, 255),
-            rgbaToInt(213, 255, 136, 255),
-            rgbaToInt(136, 255, 153, 255),
-            rgbaToInt(255, 182, 136, 255)
-
-    );
 
     @Unique
     private int colorIndex = 0;
@@ -86,7 +76,7 @@ public abstract class ChatScreenMixin extends Screen {
 
         while (matcher.find()) {
 
-            int color = this.colors.get(this.colorIndex % this.colors.size());
+            int color = ChatMagicStyles.colors.get(this.colorIndex % ChatMagicStyles.colors.size());
 
             String percentageString = matcher.group(1);
             String itemIdString = matcher.group(2);
