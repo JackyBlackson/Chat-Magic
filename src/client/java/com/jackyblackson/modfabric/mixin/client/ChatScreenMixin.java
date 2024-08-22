@@ -5,6 +5,7 @@ import com.jackyblackson.modfabric.dto.ItemTooptipInfo;
 import com.jackyblackson.modfabric.dto.MaterialDisplayInfo;
 import com.jackyblackson.modfabric.styles.ChatMagicStyles;
 import com.jackyblackson.modfabric.ui.VisualizeScreen;
+import com.jackyblackson.modfabric.utils.ColorUtils;
 import com.jackyblackson.modfabric.wematerial.WorldEditMaterial;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.hud.MessageIndicator;
@@ -16,6 +17,8 @@ import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
+import net.minecraft.text.ClickEvent;
+import net.minecraft.text.HoverEvent;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -84,17 +87,36 @@ public abstract class ChatScreenMixin extends Screen {
 
             // 返回当前滑块值
             private Double getSliderValue() {
-                return sliderMinValue + (this.value * sliderMaxValue);
-            }
-
-            @Override
-            public void onClick(double mouseX, double mouseY) {
-                super.onClick(mouseX, mouseY);
-                System.out.println("!!!!!!!!! ONCLICK !!!!!!!!!");
+                return sliderMinValue + (this.value * (sliderMaxValue - sliderMinValue));
             }
         };
 
+
+
         this.addDrawableChild(SliderWidget);
+
+        this.addDrawableChild(new SliderWidget(
+                this.width - sliderMarginRight - sliderWidth,
+                sliderMarginTop + sliderHeight + sliderMarginTop/2,
+                sliderWidth, sliderHeight,
+                Text.literal("Bg Transparency: " + formatDouble(ChatMagicConfig.backgroundAlpha)),
+                (double) (ChatMagicConfig.backgroundAlpha) / 255
+        ) {
+            @Override
+            protected void updateMessage() {
+                this.setMessage(Text.literal("Bg Transparency: " + formatDouble(ChatMagicConfig.backgroundAlpha)));
+            }
+
+            @Override
+            protected void applyValue() {
+                ChatMagicConfig.backgroundAlpha = getSliderValue();
+            }
+
+            // 返回当前滑块值
+            private int getSliderValue() {
+                return (int) (this.value * 255);
+            }
+        });
 
     }
 
@@ -103,7 +125,32 @@ public abstract class ChatScreenMixin extends Screen {
         assert this.client != null;
         this.customChatOverlayScreen.init(this.client, this.client.getWindow().getWidth(), this.client.getWindow().getHeight());
         if (this.customChatOverlayScreen != null) {
-            this.customChatOverlayScreen.render(context, mouseX, mouseY, delta);
+
+            var info = this.customChatOverlayScreen.customRender(context, mouseX, mouseY, delta);
+            int lastX = info.endX();
+            if(lastX != 0){
+                lastX += 4;
+                lastX = context.drawText(this.textRenderer,
+                        Text.literal("@ Chat Magic by Jacky_Blackson").fillStyle(
+                                Style.EMPTY
+                                        .withClickEvent(new ClickEvent(
+                                                ClickEvent.Action.OPEN_URL,
+                                                "https://modrinth.com/mod/chat-magic"
+                                        ))
+                                        .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
+                                                Text.literal("Click to open publish page!")
+                                        ))
+                                        .withBold(true)
+                                        .withColor(ColorUtils.rgbToInt(147, 147, 147))
+                        ),
+                        lastX,
+                        info.startY(),
+                        -1,
+                        true);
+                context.fill(0, info.startY() + 14, lastX + 4, info.endY() - 4, rgbaToInt(0, 0, 0, ChatMagicConfig.backgroundAlpha));
+            }
+            // re-render all the stuffs, in order to put colors on the top
+            this.customChatOverlayScreen.customRender(context, mouseX, mouseY, delta);
         }
     }
 }

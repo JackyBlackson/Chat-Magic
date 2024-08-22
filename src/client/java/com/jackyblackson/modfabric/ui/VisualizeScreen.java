@@ -10,23 +10,16 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.navigation.GuiNavigationPath;
-import net.minecraft.client.gui.screen.ChatInputSuggestor;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.SliderWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
-import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
-import org.jetbrains.annotations.Nullable;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Random;
 
 import static com.jackyblackson.modfabric.utils.ColorUtils.rgbaToInt;
@@ -111,9 +104,9 @@ public class VisualizeScreen extends Screen {
         for (var node : target.getMaterialNodes()) {
 
             int color = rgbaToInt(
-                    random.nextInt(100, 200),
-                    random.nextInt(100, 200),
-                    random.nextInt(100, 200),
+                    random.nextInt(40, 200),
+                    random.nextInt(40, 200),
+                    random.nextInt(40, 200),
                     255
             );
             Double percentage = node.getPercentage();
@@ -181,7 +174,7 @@ public class VisualizeScreen extends Screen {
 
                     // Draw a remainder on the right of the item, when custom blockstate is defined
                     if (blockStateString != null) {
-                        context.drawBorder(x + itemSize * 2 + 4, y - itemSize / 2 + 1, 2, 2, color);
+                        context.drawBorder(x + itemSize * 2 + 4 - 1, y - itemSize / 2 , 4, 4, color);
                     }
                 }
                 if(isFirst) {
@@ -336,7 +329,7 @@ public class VisualizeScreen extends Screen {
     }
 
     @Unique
-    private void renderChatFieldWithItem(DrawContext context, int mouseX, int mouseY, float delta) {
+    private MaterialDisplayInfo renderChatFieldWithItem(DrawContext context, int mouseX, int mouseY, float delta) {
 
         //TODO: ADJUST parseAndRenderBarChart TO RETURN BOTH HEIGHT AND WIDTH RECURSIVELY
         String inputText = this.chatField.getText();
@@ -372,9 +365,11 @@ public class VisualizeScreen extends Screen {
             // for the space
             lastX += 2;
         }
-        if(lastX != 0){
-            context.fill(0, y + 14, lastX + 4, minY - 4, rgbaToInt(0, 0, 0, 150));
-        }
+        return new MaterialDisplayInfo(
+                0, y,
+                lastX, minY,
+                lastX
+        );
     }
 
 
@@ -405,23 +400,19 @@ public class VisualizeScreen extends Screen {
         }
     }
 
-    @Override
-    public void resize(MinecraftClient client, int width, int height) {
-        super.resize(client, width, height);
-    }
 
     @Override
-    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+    public void render(DrawContext context, int mouseX, int mouseY, float delta) {}
+
+
+    public MaterialDisplayInfo customRender(DrawContext context, int mouseX, int mouseY, float delta) {
         //super.render(context, mouseX, mouseY, delta);
         this.onChatFieldChange(this.chatField.getText());
-        this.tooltipInfoList.clear();
-        this.renderChatFieldWithItem(context, mouseX, mouseY, delta);
-        this.renderTooltip(context);
-    }
 
-    @Override
-    protected void switchFocus(GuiNavigationPath path) {
-        super.switchFocus(path);
+        this.tooltipInfoList.clear();
+        var info = this.renderChatFieldWithItem(context, mouseX, mouseY, delta);
+        this.renderTooltip(context);
+        return info;
     }
 
     @Override
@@ -433,10 +424,5 @@ public class VisualizeScreen extends Screen {
     public VisualizeScreen(TextFieldWidget chatField) {
         super(Text.literal("Chat Content Visualization"));
         this.chatField = chatField;
-    }
-
-    @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        return super.keyPressed(keyCode, scanCode, modifiers);
     }
 }
