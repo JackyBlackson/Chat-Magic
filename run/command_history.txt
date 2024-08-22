@@ -1,3 +1,0 @@
-/weather rain
-/weather clear
-/give @p minecraft:salmon 1
