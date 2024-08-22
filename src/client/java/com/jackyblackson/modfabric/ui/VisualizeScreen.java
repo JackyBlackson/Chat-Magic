@@ -341,12 +341,17 @@ public class VisualizeScreen extends Screen {
 
         int minY = y - 12;
 
+        MaterialDisplayInfo chartInfo = null;
         for(var inputPart : this.materials) {
             // Parse and render item expressions
-            MaterialDisplayInfo chartInfo = null;
+
             if(inputPart instanceof WorldEditMaterial material){
                 chartInfo = parseAndRenderBarChart(context, lastX, y, mouseX, mouseY, material);
             } else {
+                if(chartInfo != null) {
+                    lastX = chartInfo.bottomEndX();
+                    chartInfo = null;
+                };
                 lastX = context.drawTextWithShadow(
                         this.textRenderer,
                         inputPart.toString(),
