@@ -13,18 +13,19 @@ public class WeMaterialParser {
         this.currentIndex = currentIndex;
     }
 
-    protected static WorldEditMaterial parse(String expression) {
-        return new WeMaterialParser(expression, -1).parse();
+    protected static WorldEditMaterial parse(String expression, String materialId) {
+        return new WeMaterialParser(expression, -1).parse(materialId);
     }
 
-    private WorldEditMaterial parse() {
-        WorldEditMaterial result = new WorldEditMaterial(new ArrayList<>(3));
+    private WorldEditMaterial parse(String materialId) {
+        WorldEditMaterial result = new WorldEditMaterial(new ArrayList<>(3), materialId);
         var nodeStrList = splitItemInSameLevel(readInThisLevel());
-        System.out.println(nodeStrList);
+        int nodeIndex = 0;
         for(var nodeStr : nodeStrList) {
             try {
-                var parseResult = WeMaterialNodeParser.parseNode(nodeStr);
+                var parseResult = WeMaterialNodeParser.parseNode(nodeStr, materialId + "$" + nodeIndex);
                 result.addNode(parseResult);
+                nodeIndex++;
             } catch (Exception ignored) {
 
             }
@@ -41,8 +42,6 @@ public class WeMaterialParser {
         }
         if(itemCount < result.getMaterialNodes().size()){
             double implicitPossibility = (100D - knownPossibilitiesSum) / (result.getMaterialNodes().size() - itemCount);
-//            System.out.println("implicit count: " + itemCount);
-//            System.out.println("possibilities: " + (result.getMaterialNodes().size() - itemCount));
             for (var node : result.getMaterialNodes()) {
                 if (node.percentage < 0D) {
                     node.percentage = implicitPossibility;
@@ -98,16 +97,6 @@ public class WeMaterialParser {
         }
         currentIndex = currentIndex+1 + i-1;
         return seq.substring(0, i);
-    }
-
-    public static void main(String[] args) {
-        var parser = new WeMaterialParser("12345[face=north,top=true,con=west]", 5);
-        var list = parser.splitItemInSameLevel(parser.readInThisLevel());
-        for(var item : list) {
-            System.out.println(item);
-        }
-        System.out.println("-----");
-        System.out.println("Current index is " + parser.currentIndex + ", current chat is " + parser.currentChar());
     }
 
     protected char nextChar() {

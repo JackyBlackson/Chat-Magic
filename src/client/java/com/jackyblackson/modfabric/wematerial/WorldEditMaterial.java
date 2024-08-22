@@ -7,8 +7,15 @@ import java.util.List;
 public class WorldEditMaterial {
     private List<WorldEditMaterialNode> materialNodes;
 
-    public WorldEditMaterial(List<WorldEditMaterialNode> materialNodes) {
+    private final String id;
+
+    public WorldEditMaterial(List<WorldEditMaterialNode> materialNodes, String materialId) {
         this.materialNodes = materialNodes;
+        this.id = materialId;
+    }
+
+    public String getId() {
+        return id;
     }
 
     public List<WorldEditMaterialNode> getMaterialNodes() {
@@ -26,14 +33,14 @@ public class WorldEditMaterial {
 
     public static
     WorldEditMaterial
-    of(@NotNull String expression) {
-        return WeMaterialParser.parse(expression);
+    of(@NotNull String expression, String idPrefix) {
+        return WeMaterialParser.parse(expression, idPrefix+"#");
     }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("\n{\n");
+        sb.append("\n\"" + this.id + "\": {\n");
         for (var node : materialNodes) {
             sb.append(node.toString());
         }

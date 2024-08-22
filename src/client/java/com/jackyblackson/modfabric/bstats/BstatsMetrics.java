@@ -311,33 +311,33 @@ public class BstatsMetrics {
 
         private void startSubmitting() {
             this.submitData();
-//            final Runnable submitTask =
-//                    () -> {
-//                        if (!enabled || !checkServiceEnabledSupplier.get()) {
-//                            // Submitting data or service is disabled
-//                            scheduler.shutdown();
-//                            return;
-//                        }
-////                        if (submitTaskConsumer != null) {
-////                            submitTaskConsumer.accept(this::submitData);
-////                        } else {
-////                            this.submitData();
-////                        }
-//                        this.submitData();
-//                    };
-//            // Many servers tend to restart at a fixed time at xx:00 which causes an uneven
-//            // distribution of requests on the
-//            // bStats backend. To circumvent this problem, we introduce some randomness into
-//            // the initial and second delay.
-//            // WARNING: You must not modify and part of this Metrics class, including the
-//            // submit delay or frequency!
-//            // WARNING: Modifying this code will get your plugin banned on bStats. Just
-//            // don't do it!
-//            long initialDelay = (long) (1000 * 60 * (3 + Math.random() * 3));
-//            long secondDelay = (long) (1000 * 60 * (Math.random() * 30));
-//            scheduler.schedule(submitTask, initialDelay, TimeUnit.MILLISECONDS);
-//            scheduler.scheduleAtFixedRate(
-//                    submitTask, initialDelay + secondDelay, 1000 * 60 * 30, TimeUnit.MILLISECONDS);
+            final Runnable submitTask =
+                    () -> {
+                        if (!enabled || !checkServiceEnabledSupplier.get()) {
+                            // Submitting data or service is disabled
+                            scheduler.shutdown();
+                            return;
+                        }
+                        if (submitTaskConsumer != null) {
+                            submitTaskConsumer.accept(this::submitData);
+                        } else {
+                            this.submitData();
+                        }
+                        this.submitData();
+                    };
+            // Many servers tend to restart at a fixed time at xx:00 which causes an uneven
+            // distribution of requests on the
+            // bStats backend. To circumvent this problem, we introduce some randomness into
+            // the initial and second delay.
+            // WARNING: You must not modify and part of this Metrics class, including the
+            // submit delay or frequency!
+            // WARNING: Modifying this code will get your plugin banned on bStats. Just
+            // don't do it!
+            long initialDelay = (long) (1000 * 60 * (3 + Math.random() * 3));
+            long secondDelay = (long) (1000 * 60 * (Math.random() * 30));
+            scheduler.schedule(submitTask, initialDelay, TimeUnit.MILLISECONDS);
+            scheduler.scheduleAtFixedRate(
+                    submitTask, initialDelay + secondDelay, 1000 * 60 * 30, TimeUnit.MILLISECONDS);
         }
 
         private void submitData() {
@@ -365,18 +365,18 @@ public class BstatsMetrics {
                     errorLogger.accept("Could not submit bStats metrics data", e);
                 }
             }
-//            scheduler.execute(
-//                    () -> {
-//                        try {
-//                            // Send the data
-//                            sendData(data);
-//                        } catch (Exception e) {
-//                            // Something went wrong! :(
-//                            if (logErrors) {
-//                                errorLogger.accept("Could not submit bStats metrics data", e);
-//                            }
-//                        }
-//                    });
+            scheduler.execute(
+                    () -> {
+                        try {
+                            // Send the data
+                            sendData(data);
+                        } catch (Exception e) {
+                            // Something went wrong! :(
+                            if (logErrors) {
+                                errorLogger.accept("Could not submit bStats metrics data", e);
+                            }
+                        }
+                    });
         }
 
         private void sendData(JsonObjectBuilder.JsonObject data) throws Exception {

@@ -1,6 +1,7 @@
 package com.jackyblackson.modfabric.styles;
 
 import com.jackyblackson.modfabric.utils.ColorUtils;
+import net.minecraft.text.ClickEvent;
 import net.minecraft.text.Style;
 
 import java.util.List;
@@ -20,12 +21,33 @@ public class ChatMagicStyles {
             .withBold(true)
             .withUnderline(true);
 
-    public static List<Integer> colors = List.of(
-            rgbaToInt(100, 100, 255, 255),
-            rgbaToInt(137, 255, 241, 255),
-            rgbaToInt(255, 136, 196, 255),
-            rgbaToInt(213, 255, 136, 255),
-            rgbaToInt(136, 255, 153, 255),
-            rgbaToInt(255, 182, 136, 255)
-    );
+    public static final Style BLOCKSTATE_UNKNOWN_STYLE = Style.EMPTY
+            .withColor(ColorUtils.rgbToInt(180, 65, 100));
+
+    public static final Style SELECTOR_STYLE = Style.EMPTY
+            .withColor(ColorUtils.rgbToInt(228, 151, 102))
+            .withBold(true)
+            // .withClickEvent(ClickEvent)
+            .withUnderline(true);
+
+    public static final Style SELECTOR_DOUBLE_PARAM_STYLE = Style.EMPTY
+            .withColor(ColorUtils.rgbToInt(97, 182, 209))
+            .withBold(true)
+            .withUnderline(true);
+
+
+    public static final Style SELECTOR_MATERIAL_PARAM_STYLE = Style.EMPTY
+            .withColor(ColorUtils.rgbToInt(168, 219, 111))
+            .withBold(true)
+            .withUnderline(true);
+
+    public static final Style SELECTOR_UNKNOWN_PARAM_STYLE = Style.EMPTY
+            .withColor(ColorUtils.rgbToInt(147, 146, 147))
+            .withBold(true)
+            .withUnderline(true);
+
+    public static final Style UNKNOWN_ITEM_ID_STYLE = Style.EMPTY
+            .withColor(ColorUtils.rgbToInt(97, 182, 209))
+            .withBold(true)
+            .withItalic(true);
 }
